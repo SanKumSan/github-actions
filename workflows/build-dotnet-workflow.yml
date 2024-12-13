@@ -1,0 +1,54 @@
+name: Build .NET Project
+
+# This workflow is used by services workfow for Setup and Net building
+on:
+  workflow_call:
+    inputs:
+      SOLUTION_PATH:
+        description: 'The path to the solution file'
+        required: true
+        type: string
+      OUTPUT_FILENAME:
+        description: 'Name of the outputfile'
+        required: false
+        type: string
+        default: 'Build-Output'
+      CONFIGURATION:
+        description: 'Build configuration (e.g., Release or Debug)'
+        required: false
+        type: string
+        default: 'Release'
+      PLATFORM:
+        description: 'Target platform (e.g., win-x64, linux-x64)'
+        required: false
+        type: string
+        default: 'win-x64'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+      packages: write
+      
+    steps:
+      - name: Debug Environment Variables
+        run: env
+
+      # 1. Repository auschecken
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Holt die gesamte Historie
+
+      # 2. NuGet-set up
+      - name: Install NuGet CLI
+        uses: NuGet/setup-nuget@v1
+
+      # 7. NuGet-Pakete restore
+      - name: Restore NuGet packages/ Install Dependencies
+        run: dotnet restore ${{ inputs.SOLUTION_PATH }}
+
+      # 8. Projekt bauen
+      - name: Build the project
+        run: dotnet build ${{ inputs.SOLUTION_PATH }} --configuration ${{ inputs.CONFIGURATION }}
