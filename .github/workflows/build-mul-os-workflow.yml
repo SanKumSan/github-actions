@@ -26,10 +26,10 @@ on:
 
 jobs:
   build:
-    runs-on: ${{}}
+    runs-on: ${{matrix.os}}
     strategy:
-    matrix:
-      os: [windows-latest, ubuntu-lates]
+      matrix:
+       os: [windows-latest, ubuntu-latest]
     permissions:
       contents: write
       packages: write
