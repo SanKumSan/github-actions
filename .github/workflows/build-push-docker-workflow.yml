@@ -58,7 +58,6 @@ jobs:
         uses: mr-smithers-excellent/docker-build-push@v6
         with:
           image: santhucr7/net-core-test-app
-          tags: v1, latest
           registry: docker.io
           dockerfile: ${{ inputs.DOCKER_FILE_PATH }}
           username: ${{ secrets.DOCKER_USERNAME }}
