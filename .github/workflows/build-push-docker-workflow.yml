@@ -27,6 +27,9 @@ on:
         description: 'Docker file from service for docker operations'
         required: false
         type: string
+        secrets:
+      DOCKER_USERNAME: {}
+      DOCKER_PASSWORD: {}
 
 jobs:
   build:
