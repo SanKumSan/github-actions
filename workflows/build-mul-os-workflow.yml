@@ -23,13 +23,18 @@ on:
         required: false
         type: string
         default: 'win-x64'
+      TEST_PATH:
+        description: 'The test csproj path'
+        required: true
+        type: string
 
 jobs:
   build:
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
-      os: [windows-latest, ubuntu-latest]
+      #os: [windows-latest, ubuntu-latest]
+      os: [ubuntu-latest]
 
     permissions:
       contents: write
@@ -57,11 +62,16 @@ jobs:
       - name: Build the project
         run: dotnet build ${{ inputs.SOLUTION_PATH }} --configuration ${{ inputs.CONFIGURATION }}
 
-        # 9. Projekt publish
+      # 9. Projekt publish
+      - name: Test the project
+        run: dotnet test ${{ inputs.TEST_PATH }} --configuration ${{ inputs.CONFIGURATION }} -l trx -v normal --no-build
+        if: ${{ inputs.TEST_PATH != null}}
+
+     # 10. Projekt publish
       - name: Publish the project
         run: dotnet publish ${{ inputs.SOLUTION_PATH }} --configuration ${{ inputs.CONFIGURATION }} --runtime ${{ inputs.PLATFORM }} --output ./deploy --self-contained false
 
-      # 10. Veröffentlichte Dateien prüfen
+      # 11. Veröffentlichte Dateien prüfen
       - name: List deployed files
         shell: pwsh
         run: |
@@ -72,13 +82,13 @@ jobs:
             Write-Host "Deploy folder does not exist."
           }
 
-      # 11. Artifacts Upload
+      # 12. Artifacts Upload
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: ${{ inputs.OUTPUT_FILENAME }}
           path: ./deploy
       
-      # 12. END
+      # 13. END
       - name: End Signed San
         run: echo "Success. End GitHub Actions"
