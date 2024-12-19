@@ -50,10 +50,19 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: TestResults
-          path: TestResults.trx
+          path: ./deploy
 
       - name: Publish the project
         run: dotnet publish ${{ inputs.SOLUTION_PATH }} --configuration ${{ inputs.CONFIGURATION }} --runtime ${{ inputs.PLATFORM }} --output ./deploy --self-contained false
+
+      # Artifact version
+      - name: Define Artifact Version
+        id: version
+        run: |
+          BASE_VERSION="5.1.1.1"
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-8)
+          ARTIFACT_VERSION="${BASE_VERSION}-${SHORT_SHA}"
+          echo "ARTIFACT_VERSION=${ARTIFACT_VERSION}" >> $GITHUB_ENV
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
