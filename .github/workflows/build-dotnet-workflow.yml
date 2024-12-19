@@ -44,7 +44,7 @@ jobs:
         run: dotnet build ${{ inputs.SOLUTION_PATH }} --configuration ${{ inputs.CONFIGURATION }}
 
       - name: Run Tests
-        run: dotnet test ${{ inputs.TEST_PATH }} --configuration ${{ inputs.CONFIGURATION }} --logger "trx;LogFileName=TestResults.trx"
+        run: dotnet test ${{ inputs.TEST_PATH }} --configuration ${{ inputs.CONFIGURATION }} --logger "trx;LogFileName=TestResults.trx" --results-directory ./deploy/TestResults
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v3
@@ -63,9 +63,10 @@ jobs:
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-8)
           ARTIFACT_VERSION="${BASE_VERSION}-${SHORT_SHA}"
           echo "ARTIFACT_VERSION=${ARTIFACT_VERSION}" >> $GITHUB_ENV
+          echo ${{ env.ARTIFACT_VERSION }}
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ inputs.OUTPUT_FILENAME }}
+          name: ${{ inputs.OUTPUT_FILENAME }}-${{ env.ARTIFACT_VERSION }}
           path: ./deploy
