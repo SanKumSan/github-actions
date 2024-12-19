@@ -1,6 +1,5 @@
-name: Build .NET Project
+name: Build-Test-Publish NET Project
 
-# This workflow is used by services workfow for Setup and Net building
 on:
   workflow_call:
     inputs:
@@ -30,69 +29,34 @@ on:
 
 jobs:
   build:
-    runs-on: ${{matrix.os}}
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-      #os: [windows-latest, ubuntu-latest]
         os: [ubuntu-latest]
 
-    permissions:
-      contents: write
-      packages: write
-      
     steps:
-      - name: Debug Environment Variables
-        run: env
-
-      # 1. Repository auschecken
       - name: Checkout Repository
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Holt die gesamte Historie
+          fetch-depth: 0
 
-      # # 2. NuGet-set up
-      # - name: Install NuGet CLI
-      #   uses: NuGet/setup-nuget@v1
-
-      # 7. NuGet-Pakete restore
-      # - name: Restore NuGet packages/ Install Dependencies
-      #   run: dotnet restore ${{ inputs.SOLUTION_PATH }}
-
-      # 8. Projekt bauen
       - name: Build the project
         run: dotnet build ${{ inputs.SOLUTION_PATH }} --configuration ${{ inputs.CONFIGURATION }}
 
-      # 9. Projekt publish
-      - name: Test the project
-        #run: dotnet test ${{ inputs.TEST_PATH }} --configuration ${{ inputs.CONFIGURATION }} -l trx -v normal --no-build
-        #run: dotnet test ${{ inputs.TEST_PATH }} --configuration ${{ inputs.CONFIGURATION }}
-        run: dotnet test ${{ inputs.TEST_PATH }} --configuration ${{ inputs.CONFIGURATION }} --logger trx
-        #if: ${{ inputs.TEST_PATH != null }}
-        #run: echo "Running tests in path: ${{ inputs.TEST_PATH }}"
-        #      #echo dotnet test ${{ inputs.TEST_PATH }}
+      - name: Run Tests
+        run: dotnet test ${{ inputs.TEST_PATH }} --configuration ${{ inputs.CONFIGURATION }} --logger "trx;LogFileName=TestResults.trx"
 
-     # 10. Projekt publish
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: TestResults
+          path: TestResults.trx
+
       - name: Publish the project
         run: dotnet publish ${{ inputs.SOLUTION_PATH }} --configuration ${{ inputs.CONFIGURATION }} --runtime ${{ inputs.PLATFORM }} --output ./deploy --self-contained false
 
-      # 11. Veröffentlichte Dateien prüfen
-      - name: List deployed files
-        shell: pwsh
-        run: |
-          if (Test-Path -Path ./deploy) {
-            Write-Host "Listing all files in deploy folder:"
-            Get-ChildItem -Path ./deploy -Recurse
-          } else {
-            Write-Host "Deploy folder does not exist."
-          }
-
-      # 12. Artifacts Upload
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: ${{ inputs.OUTPUT_FILENAME }}
           path: ./deploy
-      
-      # 13. END
-      - name: End Signed San
-        run: echo "Success. End GitHub Actions"
