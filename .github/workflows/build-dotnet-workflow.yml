@@ -64,7 +64,8 @@ jobs:
 
       # 9. Projekt publish
       - name: Test the project
-        run: dotnet test ${{ inputs.TEST_PATH }} --configuration ${{ inputs.CONFIGURATION }} -l trx -v normal --no-build
+        #run: dotnet test ${{ inputs.TEST_PATH }} --configuration ${{ inputs.CONFIGURATION }} -l trx -v normal --no-build
+        run: dotnet test ${{ inputs.TEST_PATH }} --configuration ${{ inputs.CONFIGURATION }}
         if: ${{ inputs.TEST_PATH != null}}
 
      # 10. Projekt publish
