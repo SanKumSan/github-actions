@@ -23,10 +23,19 @@ on:
         required: false
         type: string
         default: 'win-x64'
+      TEST_PATH:
+        description: 'The test csproj path'
+        required: true
+        type: string
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+      #os: [windows-latest, ubuntu-latest]
+        os: [ubuntu-latest]
+
     permissions:
       contents: write
       packages: write
@@ -41,23 +50,28 @@ jobs:
         with:
           fetch-depth: 0  # Holt die gesamte Historie
 
-      # 2. NuGet-set up
-      - name: Install NuGet CLI
-        uses: NuGet/setup-nuget@v1
+      # # 2. NuGet-set up
+      # - name: Install NuGet CLI
+      #   uses: NuGet/setup-nuget@v1
 
       # 7. NuGet-Pakete restore
-      - name: Restore NuGet packages/ Install Dependencies
-        run: dotnet restore ${{ inputs.SOLUTION_PATH }}
+      # - name: Restore NuGet packages/ Install Dependencies
+      #   run: dotnet restore ${{ inputs.SOLUTION_PATH }}
 
       # 8. Projekt bauen
       - name: Build the project
         run: dotnet build ${{ inputs.SOLUTION_PATH }} --configuration ${{ inputs.CONFIGURATION }}
 
-        # 9. Projekt publish
+      # 9. Projekt publish
+      - name: Test the project
+        run: dotnet test ${{ inputs.TEST_PATH }} --configuration ${{ inputs.CONFIGURATION }} -l trx -v normal --no-build
+        if: ${{ inputs.TEST_PATH != null}}
+
+     # 10. Projekt publish
       - name: Publish the project
         run: dotnet publish ${{ inputs.SOLUTION_PATH }} --configuration ${{ inputs.CONFIGURATION }} --runtime ${{ inputs.PLATFORM }} --output ./deploy --self-contained false
 
-      # 10. Veröffentlichte Dateien prüfen
+      # 11. Veröffentlichte Dateien prüfen
       - name: List deployed files
         shell: pwsh
         run: |
@@ -68,14 +82,13 @@ jobs:
             Write-Host "Deploy folder does not exist."
           }
 
-      # 11. Artifacts Upload
+      # 12. Artifacts Upload
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: ${{ inputs.OUTPUT_FILENAME }}
           path: ./deploy
       
-      # 12. END
-      - name: End
+      # 13. END
+      - name: End Signed San
         run: echo "Success. End GitHub Actions"
-
