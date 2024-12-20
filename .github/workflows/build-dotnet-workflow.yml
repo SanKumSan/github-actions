@@ -30,8 +30,8 @@ env:
   AZURE_CONTAINER_REGISTRY: mydockerimagessancr7
   #CONTAINER_APP_NAME: refitapi
   RESOURCE_GROUP: acr_actions
-  run: |
-    echo "seccc - ${{ secrets.AZURE_REGISTRY_USERNAME }}"
+  #run: |
+    #echo "seccc - ${{ secrets.AZURE_REGISTRY_USERNAME }}"
   
 jobs:
   build:
@@ -41,7 +41,18 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
-       
+      - name: Access and Use the Secret
+        env:
+          AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+          AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+        run: |
+          echo "The secret is being accessed"
+          if [ -z "$MY_SECRET" ]; then
+            echo "Secret is not set!" && exit 1
+          else
+            echo "Secret is available and working!"
+          fi
+          
       - name: Checkout Repository
         uses: actions/checkout@v2
         with:
@@ -82,8 +93,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
-          username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+          username: ${{ AZURE_REGISTRY_USERNAME }}
+          password: ${{ AZURE_REGISTRY_PASSWORD }}
           
       - name: END
         run: |
