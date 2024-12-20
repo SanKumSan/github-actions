@@ -81,7 +81,7 @@ jobs:
         with:
           registry: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
           username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }
+          password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
           
       - name: END
         run: |
