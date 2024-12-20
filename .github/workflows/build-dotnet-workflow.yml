@@ -30,6 +30,8 @@ env:
   AZURE_CONTAINER_REGISTRY: mydockerimagessancr7
   #CONTAINER_APP_NAME: refitapi
   RESOURCE_GROUP: acr_actions
+  run: |
+    echo "seccc - ${{ secrets.AZURE_REGISTRY_USERNAME }}"
   
 jobs:
   build:
