@@ -51,7 +51,7 @@ jobs:
             echo "Secret is not set!" && exit 1
           else
             echo "Secret is available and working!"
-          fi
+          #fi
           
       - name: Checkout Repository
         uses: actions/checkout@v2
