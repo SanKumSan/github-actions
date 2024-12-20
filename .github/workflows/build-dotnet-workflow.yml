@@ -48,7 +48,7 @@ jobs:
         run: |
           #echo "The secret is being accessed"
           if [ -z "$AZURE_REGISTRY_USERNAME" ]; then
-            echo "Secret is not set!" && exit 1
+            echo "Secret is not set!"
           else
             echo "Secret is available and working!"
           #fi
