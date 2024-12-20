@@ -26,7 +26,11 @@ on:
         description: 'The test csproj path'
         required: true
         type: string
-
+env:
+  AZURE_CONTAINER_REGISTRY: mydockerimagessancr7
+  #CONTAINER_APP_NAME: refitapi
+  RESOURCE_GROUP: acr_actions
+  
 jobs:
   build:
     runs-on: ${{ matrix.os }}
