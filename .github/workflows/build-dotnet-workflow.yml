@@ -40,19 +40,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
 
-    steps:
-      - name: Access and Use the Secret
-        env:
-          AZURE_REGISTRY_USERNAME: ${{ secrets.AZURE_REGISTRY_USERNAME }}
-          AZURE_REGISTRY_PASSWORD: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
-        run: |
-          #echo "The secret is being accessed"
-          if [ -z "$AZURE_REGISTRY_USERNAME" ]; then
-            echo "Secret is not set!"
-          else
-            echo "Secret is available and working!"
-          #fi
-          
+    steps:          
       - name: Checkout Repository
         uses: actions/checkout@v2
         with:
