@@ -78,7 +78,7 @@ jobs:
           path: ./deploy
 
   # Optionally, you can add a job to log variables before running the build workflow
-  log:
+  log-action:
     runs-on: ubuntu-latest
     steps:
       - name: Echo Inputs and Secrets
