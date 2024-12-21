@@ -76,3 +76,11 @@ jobs:
         with:
           name: ${{ inputs.OUTPUT_FILENAME }}-${{ env.ARTIFACT_VERSION }}
           path: ./deploy
+
+  # Optionally, you can add a job to log variables before running the build workflow
+  log:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo Inputs and Secrets
+        run: |
+          echo "Azure Registry Username: ${{ secrets.AZURE_REGISTRY_USERNAME }}"  # This will be masked in the logs
